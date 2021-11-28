@@ -4,9 +4,11 @@
 // | 缓存设置
 // +----------------------------------------------------------------------
 
+use think\facade\Env;
+
 return [
     // 默认缓存驱动
-    'default' => env('cache.driver', 'file'),
+    'default' => env('cache.driver', 'redis'),
 
     // 缓存连接方式配置
     'stores'  => [
@@ -24,6 +26,13 @@ return [
             // 序列化机制 例如 ['serialize', 'unserialize']
             'serialize'  => [],
         ],
+        'redis' => [
+            'type' => 'redis',
+            'host' => Env::get('REDIS.REDIS_HOST'),
+            'port' => Env::get('REDIS.REDIS_PORT'),
+            'password' => Env::get('REDIS.REDIS_PASSWORD'),
+            'select' => Env::get('REDIS.SELECT_REDIS',0),
+        ]
         // 更多的缓存连接
     ],
 ];

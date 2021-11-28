@@ -153,6 +153,10 @@ class Base extends BaseController
     public function initialize()
     {
         parent::initialize();
+        $this->adminInfo = [
+            'admin_id' => $this->request->uid,
+            'role_key' => $this->request->role_key
+        ];
     }
 
     /**
@@ -187,14 +191,18 @@ class Base extends BaseController
     public function commonValidate(string $sceneName,array $data) :bool
     {
         if(!$this->validate->scene($sceneName)->check($data)) {
-            $err = explode('|',$this->validate->getError());
-            $this->code = $err[0];
-            $this->msg = $err[1];
+            if (false === strrpos($this->validate->getError(),'|')) {
+                $this->code = -1;
+                $this->msg  = $this->validate->getError();
+            } else {
+                $err = explode('|',$this->validate->getError());
+                $this->code = $err[0];
+                $this->msg  = $err[1];
+            }
             return true;
         }
         return false;
     }
-
 
     /**
      * 公共方法返回数据结构
@@ -238,7 +246,7 @@ class Base extends BaseController
         }
         $this->code     = $result ? 1 : 0;
         $this->status   = $result ? 200 : 504;
-        $this->returnData = is_bool($result) ? [] : $result;
+        $this->returnData = !is_array($result) ? [] : $result;
         return $this->message($validate);
     }
 
