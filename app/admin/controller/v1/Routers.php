@@ -19,5 +19,18 @@ class Routers extends Base
         $this->validate = new RoutersValidate();
     }
 
+    /**
+     * 显示资源列表
+     */
+    public function index() :\think\Response
+    {
+        $result = $this->model->routersByTree($this->adminInfo['user_info']->role_id);
+        if (!empty($result)) {
+            //构建返回数据结构
+            return $this->jsonR('获取成功',$result);
+        }
+        //构建返回数据结构
+        return $this->jsonR('获取失败');
+    }
 
 }

@@ -34,12 +34,10 @@ class checkSign
         if (!in_array($route, $whitelist)) { // 对登录控制器放行
             $token = request()->header('X-token');  // 前端请求携带的Token信息
             $jwt = JwtUtil::verification(Env::get('app_key','test'), $token); // 与签发的key一致
-            \think\facade\Cache::set('jwt',$jwt,200);
             if ($jwt['status'] == 200) {
                 $request->uid = $jwt['data']->data->uid; // 传入登录用户ID
                 $request->role_key = $jwt['data']->data->role; // 传入登录用户角色组key
-            } else {
-                return $jwt;
+                $request->user_info = $jwt['data']->data->user_info;
             }
         }
         return $next($request);

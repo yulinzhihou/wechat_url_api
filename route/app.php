@@ -10,8 +10,15 @@
 // +----------------------------------------------------------------------
 use think\facade\Route;
 
-Route::get('think', function () {
-    return 'hello,ThinkPHP6!';
-});
-
-Route::get('hello/:name', 'index/hello');
+return [
+    Route::miss(function(){
+        return json([
+            "status"    =>  999,
+            'message'   =>  '未找到合适的路由，请联系后端小哥哥补接口',
+            'method'    =>  request()->method(),
+            'route'     =>  request()->url(),
+            'create_time'   =>  time(),
+            'date_time'     =>  date("Y-m-d H:i:s",time())
+        ]);
+    })
+];

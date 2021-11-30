@@ -98,14 +98,31 @@ class Base extends Model
 
     /**
      * 获取详情
-     * @param array $data
+     * @param int $id   主键
+     * @param array $condition  查询条件,默认查全部 ，如状态['status' => 1]
      * @return array
      */
-    public function getInfo(array $data) : array
+    public function getInfo(int $id,array $condition = []) : array
     {
         try {
-            if (isset($data['id'])) {
-                $result = $this->field($this->field)->find($data['id']);
+            $result = $this->field($this->field)->where($condition)->find($id);
+            return $result ? $result->toArray() : [];
+        } catch (\Exception $e) {
+            Log::sql($e->getMessage(),$e->getTrace());
+            return [];
+        }
+    }
+
+    /**
+     * 通过关系获取详情
+     * @param array $data 通过数据字段获取详情 ['name' = 'abc' ]
+     * @return array
+     */
+    public function getInfoByField(array $data) : array
+    {
+        try {
+            if (!empty($data)) {
+                $result = $this->field($this->field)->where($data)->find();
                 return $result ? $result->toArray() : [];
             }
             return [];

@@ -155,7 +155,8 @@ class Base extends BaseController
         parent::initialize();
         $this->adminInfo = [
             'admin_id' => $this->request->uid,
-            'role_key' => $this->request->role_key
+            'role_key' => $this->request->role_key,
+            'user_info' => $this->request->user_info
         ];
     }
 
@@ -286,7 +287,7 @@ class Base extends BaseController
         if ($this->commonValidate(__FUNCTION__,$inputData)) {
             return json($this->message(true));
         }
-        $result = $this->model->getInfo($inputData);
+        $result = $this->model->getInfo((int)$inputData['id']);
         return $this->jsonR(['获取失败','获取成功'],$result);
     }
 
@@ -339,6 +340,80 @@ class Base extends BaseController
         }
         $result = $this->model->delData($inputData);
         return $this->jsonR(['删除失败','删除成功'],$result);
+    }
+
+    /**
+     * 图片，ICON上传
+     */
+    public function upload()
+    {
+        $files = $this->request->file();
+        if (!$files) {
+            $this->jsonR("请选择上传的文件");
+        }
+        $field = array_keys($files)[0];
+        $data = [];
+        //七牛云验证
+//        $this->qn->validate($this->validate->rule[$field]);
+        //兼容多图上传
+        if (is_array($files) && count($files) > 1 ) {
+            //不同字段文件名上传 image img ico
+            //上传到七牛
+            foreach ($files as $key => $fileSimple) {
+                if ($this->commonValidate(__FUNCTION__, [$key => $fileSimple])) {
+                    $this->jsonR($this->validate->getError());
+                }
+//                $result[$key] = $this->qn->uploadFile($key);
+            }
+
+//            foreach ($result as $key => $item) {
+//                $data[] = [
+//                    'cdn' => Env::get('QINIU.cdn'),
+//                    'origin_name' => $files[$key]->getOriginalName(),
+//                    'filename' => explode('/', $item['filename'])[count(explode('/', $item['filename'])) - 1],
+//                    'md5'      => md5_file($files[$key]->getPathname()),
+//                    'url' => $item['remote_url'],
+//                    'relative_path' => $item['filename']
+//                ];
+//            }
+        } elseif (is_array($files[$field]) && count($files[$field]) > 1) {
+            //同一名称的数组文件上传.image[0] image[1]
+            foreach ($files as $key => $fileSimple) {
+                if ($this->commonValidate(__FUNCTION__, [$key => $fileSimple])) {
+                    $this->jsonR($this->validate->getError());
+                    return json($this->message());
+                }
+            }
+            //上传到七牛
+//            $result = $this->qn->uploadFile($field, true, count($files[$field]));
+
+//            foreach ($result as $key => $item) {
+//                $data[] = [
+//                    'cdn' => Env::get('QINIU.cdn'),
+//                    'origin_name' => $files[$field][$key]->getOriginalName(),
+//                    'filename' => explode('/', $item['filename'])[count(explode('/', $item['filename'])) - 1],
+//                    'md5'   => md5_file($files[$field][$key]->getPathname()),
+//                    'url' => $item['remote_url'],
+//                    'relative_path' => $item['filename']
+//                ];
+//            }
+        } else {
+            if ($this->commonValidate(__FUNCTION__,[$field => $files])) {
+                $this->jsonR($this->validate->getError());
+            }
+            //上传到七牛
+//            $result = $this->qn->uploadFile($field);
+//            $data = [
+//                'cdn'           => Env::get('QINIU.cdn'),
+//                'origin_name'   => $files[$field]->getOriginalName(),
+//                'filename'       => explode('/',$result['filename'])[count(explode('/',$result['filename']))-1],
+//                'md5'           => md5_file($files[$field]->getPathname()),
+//                'url'           => $result['remote_url'],
+//                'relative_path' => $result['filename']
+//            ];
+        }
+
+        return $this->jsonR(['','上传成功'],$data);
     }
 
     /**

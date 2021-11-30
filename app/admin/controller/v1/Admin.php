@@ -27,7 +27,7 @@ class Admin extends Base
             return json($this->message(true));
         }
         $this->model->field = ['id','username','phone','email','avatar','status','create_time','update_time'];
-        $result = $this->model->getInfo(['id' => $this->adminInfo['admin_id']]);
+        $result = $this->model->getInfo($this->adminInfo['admin_id']);
         if (!empty($result)) {
             $result['roles'] = [$this->adminInfo['role_key']];
         }
