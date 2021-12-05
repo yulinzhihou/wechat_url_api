@@ -13,6 +13,7 @@ return [
         /*后台管理员模块路由*/
         Route::group('admin', function () {
             Route::get('userinfo','Admin@userInfo');
+            Route::post('upload','Admin@upload');
         });
         Route::resource('admin','Admin')->expect(['create','edit']);
 
@@ -26,11 +27,23 @@ return [
         Route::resource('admin','Admin')->expect(['create','edit']);
 
         /*小程序配置*/
-        Route::post('upload', 'AppConfig@upload');
+        Route::group('app_config', function () {
+            Route::post('upload', 'AppConfig@upload');
+        });
         Route::resource('app_config','AppConfig')->expect(['create','edit']);
 
         /*直链配置*/
+        Route::group('redirect_url', function () {
+            Route::post('upload', 'RedirectUrl@upload');
+        });
         Route::resource('redirect_url','RedirectUrl')->expect(['create','edit']);
+
+        /*接口管理系统*/
+        Route::group('app', function () {
+            Route::post('upload', 'App@upload');
+        });
+        Route::resource('app','App')->expect(['create','edit']);
+
 
     })->prefix('app\admin\controller\v1\\')->middleware([
         app\admin\middleware\checkSign::class

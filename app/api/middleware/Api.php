@@ -1,13 +1,11 @@
 <?php
 
-namespace app\admin\middleware;
+namespace app\api\middleware;
 
-use app\library\JwtUtil;
-use think\facade\Config;
-use think\facade\Env;
-use think\response\Json;
-
-class checkSign
+/**
+ * 接口中间件
+ */
+class Api
 {
     /**
      * 处理请求
@@ -17,28 +15,30 @@ class checkSign
      */
     public function handle(\think\Request $request, \Closure $next):\think\Response\Json
     {
+        //获取appid
+        $appId = $request->param('app_id');
+        $apiModel = (new \app\api\model\App());
+        $app = $apiModel->where('app_id',$appId)->findOrEmpty();
+        if ($app) {
+            return json(['message'=>'app_id非法，请检查核对','data'=>[]],504);
+        }
+        //检测域名是否合法
+        $domain = request()->domain();
+        $safetyDomain = json_decode($app['safety_domain'],true);
+        if (!in_array($domain,$safetyDomain)) {
+            return json(['message'=>'非安全域名，请检查接口域名白名单。当前被拒绝域名:'.$domain,'data'=>[]],504);
+        }
         //过滤OPTIONS请求
         if ( $_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-            header("Access-Control-Allow-Origin: *");
+            header("Access-Control-Allow-Origin: ".implode(',',$safetyDomain));
             header("Access-Control-Allow-Headers:Authorization,Content-Type,If-Match,If-Modified-Since,If-None-Match,If-Unmodified-Since,X-Requested-With,x_requested_with,X-token");
             header('Access-Control-Allow-Methods: GET, POST, PUT,DELETE,OPTIONS,PATCH,OPTIONS');
             exit;
         }
         header('Access-Control-Allow-Headers: Authorization, Content-Type, If-Match, If-Modified-Since, If-None-Match, If-Unmodified-Since, X-CSRF-TOKEN, X-Requested-With,X-token');
         header('Access-Control-Allow-Methods: GET, POST, PATCH, PUT, DELETE');
-        header('Access-Control-Allow-Origin: *');
+        header('Access-Control-Allow-Origin: '.implode(',',$safetyDomain));
 
-        $whitelist = Config::get('whitelist');
-        $route = request()->pathinfo();
-        if (!in_array($route, $whitelist)) { // 对登录控制器放行
-            $token = request()->header('X-token');  // 前端请求携带的Token信息
-            $jwt = JwtUtil::verification(Env::get('app_key','test'), $token); // 与签发的key一致
-            if ($jwt['status'] == 200) {
-                $request->uid = $jwt['data']->data->uid; // 传入登录用户ID
-                $request->role_key = $jwt['data']->data->role; // 传入登录用户角色组key
-                $request->user_info = $jwt['data']->data->user_info;
-            }
-        }
         return $next($request);
     }
 }

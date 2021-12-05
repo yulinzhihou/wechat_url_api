@@ -19,6 +19,7 @@ use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
 use think\db\exception\PDOException;
+use think\facade\Cache;
 use think\facade\Db;
 use think\facade\Env;
 use think\facade\Filesystem;
@@ -345,11 +346,11 @@ class Base extends BaseController
     /**
      * 图片，ICON上传
      */
-    public function upload()
+    public function upload():\think\Response\Json
     {
         $files = $this->request->file();
         if (!$files) {
-            $this->jsonR("请选择上传的文件");
+            return $this->jsonR("请选择上传的文件");
         }
         $field = array_keys($files)[0];
         $data = [];
@@ -360,9 +361,11 @@ class Base extends BaseController
             //不同字段文件名上传 image img ico
             //上传到七牛
             foreach ($files as $key => $fileSimple) {
-                if ($this->commonValidate(__FUNCTION__, [$key => $fileSimple])) {
-                    $this->jsonR($this->validate->getError());
-                }
+//                if ($this->commonValidate(__FUNCTION__, [$key => $fileSimple])) {
+//                    return $this->jsonR($this->validate->getError());
+//                }
+                //上传本地
+                $result = Filesystem::putFile(public_path().'uploads',$fileSimple);
 //                $result[$key] = $this->qn->uploadFile($key);
             }
 
@@ -379,11 +382,14 @@ class Base extends BaseController
         } elseif (is_array($files[$field]) && count($files[$field]) > 1) {
             //同一名称的数组文件上传.image[0] image[1]
             foreach ($files as $key => $fileSimple) {
-                if ($this->commonValidate(__FUNCTION__, [$key => $fileSimple])) {
-                    $this->jsonR($this->validate->getError());
-                    return json($this->message());
-                }
+//                if ($this->commonValidate(__FUNCTION__, [$key => $fileSimple])) {
+//                    return $this->jsonR($this->validate->getError());
+//                }
+                //上传本地
+                $filename = Filesystem::disk('public')->putFile('', $fileSimple, 'unique_id');
             }
+
+//            $result = Filesystem::putFile(public_path().'uploads',$fileSimple);
             //上传到七牛
 //            $result = $this->qn->uploadFile($field, true, count($files[$field]));
 
@@ -398,22 +404,24 @@ class Base extends BaseController
 //                ];
 //            }
         } else {
-            if ($this->commonValidate(__FUNCTION__,[$field => $files])) {
-                $this->jsonR($this->validate->getError());
-            }
+//            if ($this->commonValidate(__FUNCTION__,[$field => $files])) {
+//                return $this->jsonR($this->validate->getError());
+//            }
+            //上传本地
+            $filename = Filesystem::disk('public')->putFile('', $files[$field], 'unique_id');
             //上传到七牛
 //            $result = $this->qn->uploadFile($field);
-//            $data = [
-//                'cdn'           => Env::get('QINIU.cdn'),
-//                'origin_name'   => $files[$field]->getOriginalName(),
-//                'filename'       => explode('/',$result['filename'])[count(explode('/',$result['filename']))-1],
-//                'md5'           => md5_file($files[$field]->getPathname()),
-//                'url'           => $result['remote_url'],
-//                'relative_path' => $result['filename']
-//            ];
+            $data = [
+                'cdn'           => Env::get('QINIU.cdn'),
+                'origin_name'   => $files[$field]->getOriginalName(),
+                'filename'       => $filename,
+                'md5'           => md5_file($files[$field]->getPathname()),
+                'url'           => $this->request->domain(true).'/storage/'  . $filename,
+                'relative_path' => 'storage/'  . $filename
+            ];
         }
 
-        return $this->jsonR(['','上传成功'],$data);
+        return $this->jsonR('上传成功',$data);
     }
 
     /**

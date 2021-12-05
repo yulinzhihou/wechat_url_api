@@ -1,8 +1,9 @@
 <?php
 declare (strict_types = 1);
 
-namespace app\api\controller;
+namespace app\api\controller\v1;
 
+use app\api\controller\Base;
 use app\api\model\Url as UrlModel;
 use think\facade\Env;
 
