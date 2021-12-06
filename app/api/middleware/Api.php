@@ -11,19 +11,23 @@ class Api
      * 处理请求
      * @param \think\Request $request
      * @param \Closure $next
-     * @return Json
      */
-    public function handle(\think\Request $request, \Closure $next):\think\Response\Json
+    public function handle(\think\Request $request, \Closure $next)
     {
         //获取appid
         $appId = $request->param('app_id');
         $apiModel = (new \app\api\model\App());
-        $app = $apiModel->where('app_id',$appId)->findOrEmpty();
-        if ($app) {
-            return json(['message'=>'app_id非法，请检查核对','data'=>[]],504);
+        $app = $apiModel->where('app_id',$appId)->findOrEmpty()->toArray();
+        if (empty($app)) {
+            return json(['message'=>'appId非法，请检查核对','data'=>[]],504);
         }
         //检测域名是否合法
-        $domain = request()->domain();
+//        $domain = request()->host();
+        $refer = request()->header('referer');
+        $arr = explode('/',$refer);
+        $domain = $arr[2];
+//        dump($arr);
+//        dd($domain);
         $safetyDomain = json_decode($app['safety_domain'],true);
         if (!in_array($domain,$safetyDomain)) {
             return json(['message'=>'非安全域名，请检查接口域名白名单。当前被拒绝域名:'.$domain,'data'=>[]],504);

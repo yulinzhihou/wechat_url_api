@@ -32,6 +32,12 @@ return [
         });
         Route::resource('app_config','AppConfig')->expect(['create','edit']);
 
+        /*公众号配置*/
+        Route::group('mp_config', function () {
+            Route::post('upload', 'MpConfig@upload');
+        });
+        Route::resource('mp_config','MpConfig')->expect(['create','edit']);
+
         /*直链配置*/
         Route::group('redirect_url', function () {
             Route::post('upload', 'RedirectUrl@upload');

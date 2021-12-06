@@ -6,7 +6,7 @@ use think\Model;
 /**
  * 直接模型
  */
-class Url extends Model
+class RedirectUrl extends Model
 {
     protected $createTime = 'created_at';
 
@@ -18,24 +18,25 @@ class Url extends Model
 
     protected $schema = [
         'id'	        =>	'int',
-        'admin_id'	    =>	'string',
+        'admin_id'	    =>	'int',
         'title'	        =>	'string',
-        'head_image'	=>	'string',
+        'avatar'	    =>	'string',
         'nickname'	    =>	'string',
-        'nickname_tips'	=>	'string',
+        'user_brief'	=>	'string',
         'qrcode_url'	=>	'string',
         'qrcode_title'	=>	'string',
         'qrcode_desc'	=>	'string',
-        'phone_tips'	=>	'string',
-        'phone_btn'	    =>	'string',
-        'show_flag'	    =>	'int',
-        'show_qrcode_tips'	=>	'int',
-        'show_phone_tips'	=>	'int',
+        'qrcode_content'=>	'string',
+        'contact'	    =>	'string',
+        'contact_title'	=>	'string',
+        'status'	    =>	'int',
+        'qrcode_status'	=>	'int',
+        'contact_status'=>	'int',
         'show_num'	    =>	'int',
+        'short_link'	=>	'string',
         'click_num'	    =>	'int',
-        'created_at'	=>	'timestamp',
-        'updated_at'	=>	'timestamp',
-        'deleted_at'	=>	'timestamp',
+        'create_time'	=>	'int',
+        'update_time'	=>	'int',
     ];
 
     /**

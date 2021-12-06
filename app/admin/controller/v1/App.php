@@ -38,9 +38,12 @@ class App extends Base
             $this->pageSize = (int)$inputData['size'];
         }
 
-        $this->field = ['app_secret','app_name','app_desc','app_id','safety_domain','public_ssl','private_ssl'];
+        $this->field = ['id','app_secret','app_name','app_desc','app_id','safety_domain','public_ssl','private_ssl'];
 
         $result = $this->model->getIndexList($this->page,$this->pageSize,$this->field,$this->vague,$this->focus,$this->order);
+        foreach ($result as &$item) {
+            $item['safety_domain'] = implode(',',json_decode($item['safety_domain']));
+        }
         //构建返回数据结构
         return $this->jsonR('获取成功',$result);
     }
@@ -59,6 +62,7 @@ class App extends Base
             return json($this->message(true));
         }
         $result = $this->model->getInfo((int)$inputData['id']);
+        $result['safety_domain'] = implode(',',json_decode($result['safety_domain'],true));
         return $this->jsonR(['获取失败','获取成功'],$result);
     }
 
@@ -68,10 +72,11 @@ class App extends Base
     public function save():\think\Response
     {
         $inputData = $this->request->param();
-        //额外增加请求参数
-        if (!empty($this->params)) {
-            $inputData = array_merge($inputData,$this->params);
-        }
+        //取消传递过来的参数
+        unset($inputData['app_id']);
+        unset($inputData['app_secret']);
+        unset($inputData['private_ssl']);
+        unset($inputData['public_ssl']);
         //生成 appip
         $inputData['app_id'] = date('YmdHis',time()).mt_rand(10000,99999);
         $inputData['app_secret'] = md5(md5(base64_encode($inputData['app_id'])).$this->adminInfo['admin_id']);
@@ -99,9 +104,25 @@ class App extends Base
     public function update($id):\think\Response\Json
     {
         $inputData = $this->request->param();
-        //额外增加请求参数
-        if (!empty($this->params)) {
-            $inputData = array_merge($inputData,$this->params);
+        //取消传递过来的参数
+        unset($inputData['app_id']);
+        unset($inputData['app_secret']);
+        unset($inputData['private_ssl']);
+        unset($inputData['public_ssl']);
+//        //生成 appip
+//        $inputData['app_id'] = date('YmdHis',time()).mt_rand(10000,99999);
+//        $inputData['app_secret'] = md5(md5(base64_encode($inputData['app_id'])).$this->adminInfo['admin_id']);
+//
+//        $keyPair = KeyPair::generateKeyPair(4096);
+//
+//        $inputData['private_ssl'] = $keyPair->getPrivateKey()->getKey();
+//        $inputData['public_ssl'] = $keyPair->getPublicKey()->getKey();
+//
+        //处理接口白名单
+        if (false === strrpos($inputData['safety_domain'],',') && empty($inputData['safety_domain'])) {
+            $inputData['safety_domain'] = json_encode([]);
+        } else {
+            $inputData['safety_domain'] = json_encode(explode(',',$inputData['safety_domain']));
         }
         if ($this->commonValidate(__FUNCTION__,$inputData)) {
             return json($this->message(true));

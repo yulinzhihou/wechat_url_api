@@ -4,13 +4,13 @@ declare (strict_types = 1);
 namespace app\api\controller\v1;
 
 use app\api\controller\Base;
-use app\api\model\Url as UrlModel;
+use app\api\model\RedirectUrl as UrlModel;
 use think\facade\Env;
 
 /**
  * 直链生产类
  */
-class Url extends Base
+class RedirectUrl extends Base
 {
     protected $model = null;
 
@@ -28,15 +28,15 @@ class Url extends Base
         if (isset($inputData['id'])) {
             $result = $this->model->getInfo($inputData['id']);
             if (!empty($result)) {
-                $result['show_flag'] = (bool)$result['show_flag'];
-                $result['show_qrcode_tips'] = (bool)$result['show_qrcode_tips'];
-                $result['show_phone_tips'] = (bool)$result['show_phone_tips'];
-                $result['head_image'] = Env::get('CDN.url').'uploads/'.$result['head_image'];
-                $result['qrcode_url'] = Env::get('CDN.url').'uploads/'.$result['qrcode_url'];
-                return $this->commonReturn('获取成功',$result);
+                $result['status'] = (bool)$result['status'];
+                $result['qrcode_status'] = (bool)$result['qrcode_status'];
+                $result['contact_status'] = (bool)$result['contact_status'];
+//                $result['avatar'] = Env::get('CDN.url').'uploads/'.$result['avatar'];
+//                $result['qrcode_url'] = Env::get('CDN.url').'uploads/'.$result['qrcode_url'];
+                return $this->jsonR('获取成功',$result);
             }
         }
-        return $this->commonReturn('获取失败',false);
+        return $this->jsonR('获取失败');
     }
 
 
@@ -53,9 +53,9 @@ class Url extends Base
                 'type' => 'show_num',
             ];
             $result = $this->model->setFieldInc($data);
-            return $this->commonReturn('成功',$result);
+            return $this->jsonR('成功',$result);
         }
-        return $this->commonReturn('失败',false);
+        return $this->jsonR('失败');
     }
 
 
@@ -71,9 +71,9 @@ class Url extends Base
                 'type' => 'click_num',
             ];
             $result = $this->model->setFieldInc($data);
-            return $this->commonReturn('成功',$result);
+            return $this->jsonR('成功',$result);
         }
-        return $this->commonReturn('失败',false);
+        return $this->jsonR('失败');
     }
 
     private $url;
