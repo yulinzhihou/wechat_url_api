@@ -15,5 +15,17 @@ return [
         });
     })->prefix('app\api\controller\v1\\')->middleware([
         app\api\middleware\api::class
-    ])
+    ]),
+
+
+    Route::miss(function(){
+        return json([
+            "status"    =>  998,
+            'message'   =>  '未找到合适的路由，请联系后端小哥哥补接口',
+            'method'    =>  request()->method(),
+            'route'     =>  request()->url(),
+            'create_time'   =>  time(),
+            'date_time'     =>  date("Y-m-d H:i:s",time())
+        ]);
+    })
 ];
