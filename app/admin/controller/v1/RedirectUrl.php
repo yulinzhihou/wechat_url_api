@@ -34,14 +34,14 @@ class RedirectUrl extends Base
         $this->url = 'https://api.weixin.qq.com/cgi-bin/token';//请求url
         $paramsArray = [
             //你的appid
-            'appid' => 'wxfddfkjs54g5r5d5sdsf',
+            'appid' => 'wx436cfa5ee0f7adb9',
             //你的秘钥
-            'secret' => 'krj9er9df883kjd4j5k435jk34fddf',
+            'secret' => 'e0777e44c06bff96e69012100fdadd9b',
             //微信授权类型,官方文档定义为 ： client_credential
             'grant_type' => 'client_credential'
         ];
         $this->setParams = http_build_query($paramsArray);//生成URL参数字符串
-        $accessToken  = $this->getTokenCurl();
+        $accessToken = $this->getTokenCurl();
         Cache::set('access_token',$accessToken,300);
         // 获取token 缓存起来，再获取url_short
         $this->url = "https://api.weixin.qq.com/wxa/generate_urllink?access_token=".$accessToken;

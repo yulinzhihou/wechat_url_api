@@ -13,9 +13,9 @@ class checkSign
      * 处理请求
      * @param \think\Request $request
      * @param \Closure $next
-     * @return Json
+     * @return mixed|void
      */
-    public function handle(\think\Request $request, \Closure $next):\think\Response\Json
+    public function handle(\think\Request $request, \Closure $next)
     {
         //过滤OPTIONS请求
         if ( $_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
