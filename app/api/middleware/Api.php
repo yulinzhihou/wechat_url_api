@@ -11,6 +11,7 @@ class Api
      * 处理请求
      * @param \think\Request $request
      * @param \Closure $next
+     * @return mixed|\think\response\Json|void
      */
     public function handle(\think\Request $request, \Closure $next)
     {

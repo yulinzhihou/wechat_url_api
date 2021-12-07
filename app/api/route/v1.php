@@ -14,7 +14,7 @@ return [
             Route::post('send_click', 'RedirectUrl@sendOpenNum');
         });
     })->prefix('app\api\controller\v1\\')->middleware([
-        app\api\middleware\api::class
+        app\api\middleware\Api::class
     ]),
 
 
