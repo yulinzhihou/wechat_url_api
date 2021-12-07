@@ -9,5 +9,14 @@ namespace app\admin\model;
  */
 class RedirectUrl extends Base
 {
-    //
+
+    /**
+     * 获取小程序配置
+     * @param $adminId
+     * @return array
+     */
+    public function getAppConfig($adminId)
+    {
+        return AppConfig::where('admin_id',$adminId)->findOrEmpty()->toArray();
+    }
 }

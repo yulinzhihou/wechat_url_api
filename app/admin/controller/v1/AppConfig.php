@@ -15,6 +15,7 @@ class AppConfig extends Base
     public function initialize()
     {
         parent::initialize();
+        $this->params['admin_id'] = $this->adminInfo['admin_id'];
         $this->model = new AppConfigModel();
         $this->validate = new AppConfigValidate();
     }
