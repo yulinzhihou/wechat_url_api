@@ -23,9 +23,6 @@ return [
         /*角色组*/
         Route::resource('role','Role')->expect(['create','edit']);
 
-        /*管理员组*/
-        Route::resource('admin','Admin')->expect(['create','edit']);
-
         /*小程序配置*/
         Route::group('app_config', function () {
             Route::post('upload', 'AppConfig@upload');
@@ -41,6 +38,7 @@ return [
         /*直链配置*/
         Route::group('redirect_url', function () {
             Route::post('upload', 'RedirectUrl@upload');
+            Route::post('get_short_url', 'RedirectUrl@getShortUrl');
         });
         Route::resource('redirect_url','RedirectUrl')->expect(['create','edit']);
 
