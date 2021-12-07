@@ -40,7 +40,7 @@ class AppCreate extends Migrator
             ->addColumn('private_ssl','text',['null'=>true,'default'=>null,'comment'=>'私钥'])
             ->addColumn('create_time','integer',['limit'=>10,'null'=>true,'default'=>null,'comment'=>'创建时间'])
             ->addColumn('update_time','integer',['limit'=>10,'null'=>true,'default'=>null,'comment'=>'更新时间'])
-            ->addIndex('app_ip')
+            ->addIndex('app_id')
             ->addIndex('app_secret')
             ->addIndex('app_code')
             ->create();

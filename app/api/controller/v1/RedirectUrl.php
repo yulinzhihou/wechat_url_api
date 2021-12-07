@@ -5,6 +5,7 @@ namespace app\api\controller\v1;
 
 use app\api\controller\Base;
 use app\api\model\RedirectUrl as UrlModel;
+use think\facade\Cache;
 use think\facade\Env;
 
 /**
@@ -13,6 +14,10 @@ use think\facade\Env;
 class RedirectUrl extends Base
 {
     protected $model = null;
+
+    protected $url;
+
+    protected $setParams;
 
     public function initialize()
     {
@@ -76,23 +81,29 @@ class RedirectUrl extends Base
         return $this->jsonR('失败');
     }
 
-    private $url;
-    private $setParams;
 
     public function setUrl()
     {
         $this->url = 'https://api.weixin.qq.com/cgi-bin/token';//请求url
-        $paramsArray = array(
-            'appid' => 'wxfddfkjs54g5r5d5sdsf',//你的appid
-            'secret' => 'krj9er9df883kjd4j5k435jk34fddf',//你的秘钥
-            'grant_type' => 'client_credential'//微信授权类型,官方文档定义为 ： client_credential
-        );
+        $paramsArray = [
+            //你的appid
+            'appid' => 'wxfddfkjs54g5r5d5sdsf',
+            //你的秘钥
+            'secret' => 'krj9er9df883kjd4j5k435jk34fddf',
+            //微信授权类型,官方文档定义为 ： client_credential
+            'grant_type' => 'client_credential'
+        ];
         $this->setParams = http_build_query($paramsArray);//生成URL参数字符串
+        $accessToken  = $this->getTokenCurl();
+        // 获取token 缓存起来，再获取url_short
+        $this->url = "https://api.weixin.qq.com/wxa/generate_urllink?access_token=".$accessToken;
+
+        $shortUrl = $this->getTokenCurl(true);
 
     }
 
 
-    public function getTokenCurl($ispost = 0)
+    public function getTokenCurl($ispost = false)
     {
         $httpInfo = array();
         $ch = curl_init();
@@ -118,6 +129,9 @@ class RedirectUrl extends Base
         }
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $httpInfo = array_merge($httpInfo, curl_getinfo($ch));
+        Cache::set('http-info',$httpInfo,200);
+        Cache::set('http-code',$httpCode,200);
+        Cache::set('response',$response,300);
         curl_close($ch);
         return $response;
     }
