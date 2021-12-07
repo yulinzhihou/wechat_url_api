@@ -30,27 +30,54 @@ class RedirectUrl extends Base
     public function getShortUrl()
     {
         $inputData = $this->request->param();
-        Cache::set('inputData',$inputData,300);
-        $appConfig = $this->model->getAppConfig($this->adminInfo['admin_id']);
+        //管理员
+        $adminId = $this->adminInfo['admin_id'];
+        //获取小程序配置
+        $appConfig = $this->model->getAppConfig($adminId);
+
+        $acToken = '';
         if (!empty($appConfig)) {
-            $this->url = 'https://api.weixin.qq.com/cgi-bin/token';//请求url
-            $paramsArray = [
-                //你的appid
-                'appid' => $appConfig['app_id'],
-                //你的秘钥
-                'secret' => $appConfig['app_secret'],
-                //微信授权类型,官方文档定义为 ： client_credential
-                'grant_type' => 'client_credential'
-            ];
-            $this->setParams = http_build_query($paramsArray);//生成URL参数字符串
-            $accessToken = $this->getTokenCurl();
-            Cache::set('access_token',$accessToken,300);
+            if (Cache::has($adminId.'-access_token')) {
+                $acToken = Cache::get($adminId.'-access_token');
+            } else {
+                $this->url = 'https://api.weixin.qq.com/cgi-bin/token';//请求url
+                $paramsArray = [
+                    //微信授权类型,官方文档定义为 ： client_credential
+                    'grant_type' => 'client_credential',
+                    //你的appid
+                    'appid' => $appConfig['app_id'],
+                    //你的秘钥
+                    'secret' => $appConfig['app_secret']
+                ];
+                $this->setParams = http_build_query($paramsArray);//生成URL参数字符串
+                $accessToken = json_decode($this->getTokenCurl(),true);
+                if (isset($accessToken['access_token'])) {
+                    //表示请求成功
+                    $acToken = $accessToken['access_token'];
+                    Cache::set($adminId.'-access_token',$acToken,$accessToken['expires_in']);
+                }
+            }
+
             // 获取token 缓存起来，再获取url_short
-            $this->url = "https://api.weixin.qq.com/wxa/generate_urllink?access_token=".$accessToken;
+            $urlData = [
+                'page'          => 'pages/index/index',
+                'query'         => 'id=1&admin_id=1',
+                'is_expire'     =>  true,
+                'expire_type'   => 1,
+                'expire_interval' => 1,
+                'expire_time'   => 180 * 3600 * 24,
+                'env_release'   =>  'develop',/*release,develop,trial*/
+            ];
 
-            $shortUrl = $this->getTokenCurl(true);
 
+            $this->url = "https://api.weixin.qq.com/wxa/generate_urllink?access_token=".$acToken;
+            $this->setParams = $urlData;
+
+            $shortUrl = json_decode($this->getTokenCurl(true),true);
+//            $shortUrl = $this->http($this->url,$urlData,true);
             Cache::set('short_url',$shortUrl,300);
+
+            return $this->jsonR('获取成功',$shortUrl);
         }
         return $this->jsonR('小程序配置不正确，请检查后再进行获取');
 
@@ -69,11 +96,11 @@ class RedirectUrl extends Base
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         if ($ispost) {
             curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $this->params);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $this->setParams);
             curl_setopt($ch, CURLOPT_URL, $this->url);
         } else {
-            if ($this->params) {
-                curl_setopt($ch, CURLOPT_URL, $this->url . '?' . $this->params);
+            if ($this->setParams) {
+                curl_setopt($ch, CURLOPT_URL, $this->url . '?' . $this->setParams);
             } else {
                 curl_setopt($ch, CURLOPT_URL, $this->url);
             }
