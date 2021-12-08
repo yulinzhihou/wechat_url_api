@@ -77,7 +77,7 @@ class RedirectUrl extends Base
                 //更新URL到数据库
                 $data = [
                     'id' => $inputData['id'],
-                    'short_url' => $shortUrl['url_link']
+                    'short_link' => $shortUrl['url_link']
                 ];
                 $ret = $this->model->editData($data);
             } else {
