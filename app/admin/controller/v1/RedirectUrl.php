@@ -74,10 +74,19 @@ class RedirectUrl extends Base
             $shortUrl = $this->http($this->url,$urlData,true);
             if (isset($shortUrl['errcode']) && $shortUrl['errcode'] == 0) {
                 $url = ['url' => $shortUrl['url_link']];
+                //更新URL到数据库
+                $data = [
+                    'id' => $inputData['id'],
+                    'short_url' => $shortUrl['url_link']
+                ];
+                $ret = $this->model->editData($data);
             } else {
-                $url = [];
+                $ret = false;
             }
-            return $this->jsonR('获取成功',$url);
+            if ($ret) {
+                return $this->jsonR('获取成功',[]);
+            }
+            return $this->jsonR('获取失败');
         }
         return $this->jsonR('小程序配置不正确，请检查后再进行获取');
     }

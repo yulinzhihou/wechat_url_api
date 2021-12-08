@@ -15,7 +15,7 @@ class RedirectUrl extends Base
      * @param $adminId
      * @return array
      */
-    public function getAppConfig($adminId)
+    public function getAppConfig($adminId):array
     {
         return AppConfig::where('admin_id',$adminId)->findOrEmpty()->toArray();
     }
