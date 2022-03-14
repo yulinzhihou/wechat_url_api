@@ -20,13 +20,36 @@ class RedirectUrl extends Base
     public function initialize()
     {
         parent::initialize();
-        if ($this->adminInfo['admin_id'] != 1) {
-            $this->focus['admin_id'] = $this->adminInfo['admin_id'];
-        }
         $this->model = new RedirectUrlModel();
         $this->validate = new RedirectUrlValidate();
     }
 
+    /**
+     * 显示资源列表
+     */
+    public function index() :\think\Response
+    {
+        $inputData = $this->request->param();
+
+        if (!empty($this->params)) {
+            $inputData = array_merge($inputData,$this->params);
+        }
+        //判断是否需要分页
+        if (isset($inputData['page']) && $inputData['page'] != 0) {
+            $this->page = (int)$inputData['page'];
+        }
+        if (isset($inputData['size']) && $inputData['size'] != 0) {
+            $this->pageSize = (int)$inputData['size'];
+        }
+
+        if ($this->adminInfo['admin_id'] != 1) {
+            $this->focus['admin_id'] = $this->adminInfo['admin_id'];
+        }
+
+        $result = $this->model->getIndexList($this->page,$this->pageSize,$this->field,$this->vague,$this->focus,$this->order);
+        //构建返回数据结构
+        return $this->jsonR('获取成功',$result);
+    }
     /**
      * 生成短链
      */
