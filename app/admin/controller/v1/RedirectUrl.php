@@ -69,7 +69,7 @@ class RedirectUrl extends Base
                 'query'         => 'id='.$inputData['id'].'&admin_id='.$adminId,
                 'is_expire'     =>  true,
                 'expire_type'   => 1,
-                'expire_interval' => 1,
+                'expire_interval' => 30,/*30天有效*/
                 /*release,develop,trial*/
                 'env_version'   =>  'release'
             ];
