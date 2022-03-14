@@ -20,14 +20,17 @@ class RedirectUrl extends Base
     public function initialize()
     {
         parent::initialize();
+        if ($this->adminInfo['admin_id'] !== 1) {
+            $this->focus['admin_id'] = $this->adminInfo['admin_id'];
+        }
         $this->model = new RedirectUrlModel();
         $this->validate = new RedirectUrlValidate();
     }
 
-
-
-
-    public function getShortUrl()
+    /**
+     * 生成短链
+     */
+    public function getShortUrl():\think\Response\Json
     {
         $inputData = $this->request->param();
         $id = $inputData['id'] ?? 1;
