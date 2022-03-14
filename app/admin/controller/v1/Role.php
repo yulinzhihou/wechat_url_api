@@ -19,6 +19,38 @@ class Role extends Base
         $this->validate = new RoleValidate();
     }
 
+
+    /**
+     * 显示资源列表
+     */
+    public function index() :\think\Response
+    {
+        $inputData = $this->request->param();
+
+        if (!empty($this->params)) {
+            $inputData = array_merge($inputData,$this->params);
+        }
+        //判断是否需要分页
+        if (isset($inputData['page']) && $inputData['page'] != 0) {
+            $this->page = (int)$inputData['page'];
+        }
+        if (isset($inputData['size']) && $inputData['size'] != 0) {
+            $this->pageSize = (int)$inputData['size'];
+        }
+
+        $result = $this->model->getIndexList($this->page,$this->pageSize,$this->field,$this->vague,$this->focus,$this->order);
+        // 处理rules
+        foreach ($result as $key => $item) {
+            if ($item['rules'] != '*') {
+                $result[$key]['rules'] = explode(',',$item['rules']);
+            }
+        }
+
+        //构建返回数据结构
+        return $this->jsonR('获取成功',$result);
+    }
+
+
     /**
      * 保存新建的资源
      */
