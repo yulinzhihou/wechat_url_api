@@ -30,6 +30,7 @@ class RedirectUrl extends Base
     public function getShortUrl()
     {
         $inputData = $this->request->param();
+        $id = $inputData['id'] ?? 1;
         //管理员
         $adminId = $this->adminInfo['admin_id'];
         //获取小程序配置
@@ -61,7 +62,7 @@ class RedirectUrl extends Base
             // 获取token 缓存起来，再获取url_short
             $urlData = [
                 'path'          => 'pages/index/index',
-                'query'         => 'id=1&admin_id=1',
+                'query'         => 'id='.$inputData['id'].'&admin_id=1',
                 'is_expire'     =>  true,
                 'expire_type'   => 1,
                 'expire_interval' => 1,
