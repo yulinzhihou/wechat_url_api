@@ -897,4 +897,23 @@ class Base extends BaseController
         }
     }
 
+    /**
+     * 打印调试信息到日志
+     * @param $data
+     * @param string $string
+     * @return void
+     */
+    public function dLog($data, string $string = 'debug')
+    {
+        $newData = null;
+
+        if (is_array($data)) {
+            $newData = json_encode($data);
+        } else {
+            $newData = $data;
+        }
+
+        \think\facade\Log::record($string. '==' . $newData);
+    }
+
 }

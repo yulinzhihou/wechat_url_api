@@ -46,6 +46,8 @@ class RedirectUrl extends Base
             $this->focus['admin_id'] = $this->adminInfo['admin_id'];
         }
 
+        $this->dLog($this->adminInfo);
+
         $result = $this->model->getIndexList($this->page,$this->pageSize,$this->field,$this->vague,$this->focus,$this->order);
         //构建返回数据结构
         return $this->jsonR('获取成功',$result);
