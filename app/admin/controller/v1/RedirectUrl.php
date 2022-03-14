@@ -38,7 +38,7 @@ class RedirectUrl extends Base
 
         $acToken = '';
         if (!empty($appConfig)) {
-            if (Cache::has($adminId.'-access_token') && if (Cache::has($inputData['id'].'-short-url')){
+            if (Cache::has($adminId.'-access_token') && Cache::has($inputData['id'].'-short-url')){
                 $acToken = Cache::get($adminId.'-access_token');
             } else {
                 $url = 'https://api.weixin.qq.com/cgi-bin/token?';//请求url
