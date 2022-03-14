@@ -20,7 +20,7 @@ class RedirectUrl extends Base
     public function initialize()
     {
         parent::initialize();
-        if ($this->adminInfo['admin_id'] !== 1) {
+        if ($this->adminInfo['admin_id'] != 1) {
             $this->focus['admin_id'] = $this->adminInfo['admin_id'];
         }
         $this->model = new RedirectUrlModel();

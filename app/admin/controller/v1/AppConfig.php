@@ -16,7 +16,7 @@ class AppConfig extends Base
     {
         parent::initialize();
         $this->params['admin_id'] = $this->adminInfo['admin_id'];
-        if ($this->adminInfo['admin_id'] == 1) {
+        if ($this->adminInfo['admin_id'] != 1) {
             $this->focus['admin_id'] = $this->adminInfo['admin_id'];
         }
         $this->model = new AppConfigModel();
