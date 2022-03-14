@@ -23,33 +23,6 @@ class App extends Base
         $this->validate = new AppValidate();
     }
 
-    /**
-     * 显示资源列表
-     */
-    public function index() :\think\Response
-    {
-        $inputData = $this->request->param();
-
-        if (!empty($this->params)) {
-            $inputData = array_merge($inputData,$this->params);
-        }
-        //判断是否需要分页
-        if (isset($inputData['page']) && $inputData['page'] != 0) {
-            $this->page = (int)$inputData['page'];
-        }
-        if (isset($inputData['size']) && $inputData['size'] != 0) {
-            $this->pageSize = (int)$inputData['size'];
-        }
-
-        $this->field = ['id','app_secret','app_name','app_desc','app_id','safety_domain','public_ssl','private_ssl'];
-
-        $result = $this->model->getIndexList($this->page,$this->pageSize,$this->field,$this->vague,$this->focus,$this->order);
-        foreach ($result as &$item) {
-            $item['safety_domain'] = implode(',',json_decode($item['safety_domain']));
-        }
-        //构建返回数据结构
-        return $this->jsonR('获取成功',$result);
-    }
 
     /**
      * 显示指定的资源

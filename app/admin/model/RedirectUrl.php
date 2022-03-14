@@ -9,6 +9,28 @@ namespace app\admin\model;
  */
 class RedirectUrl extends Base
 {
+    protected $schema = [
+        'id'	    =>	'int',
+        'admin_id'	=>	'int',
+        'title'	    =>	'string',
+        'avatar'	=>	'string',
+        'nickname'	=>	'string',
+        'user_brief'	=>	'string',
+        'qrcode_url'	=>	'string',
+        'qrcode_title'	=>	'string',
+        'qrcode_desc'	=>	'string',
+        'qrcode_content'	=>	'string',
+        'contact'	=>	'string',
+        'contact_title'	=>	'string',
+        'status'	=>	'int',
+        'qrcode_status'	=>	'int',
+        'contact_status'	=>	'int',
+        'show_num'	=>	'int',
+        'short_link'	=>	'string',
+        'click_num'	=>	'int',
+        'create_time'	=>	'int',
+        'update_time'	=>	'int'
+    ];
 
     /**
      * 获取小程序配置
