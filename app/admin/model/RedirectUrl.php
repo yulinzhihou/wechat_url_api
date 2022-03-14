@@ -36,9 +36,16 @@ class RedirectUrl extends Base
      * 获取小程序配置
      * @param $adminId
      * @return array
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
      */
     public function getAppConfig($adminId):array
     {
-        return AppConfig::where('admin_id',$adminId)->findOrEmpty()->toArray();
+        $data = AppConfig::where('admin_id',$adminId)->select()->toArray();
+        if (count($data) > 0 ) {
+            return $data[0];
+        }
+        return [];
     }
 }

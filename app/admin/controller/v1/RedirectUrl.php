@@ -20,6 +20,7 @@ class RedirectUrl extends Base
     public function initialize()
     {
         parent::initialize();
+        $this->params['admin_id'] = $this->adminInfo['admin_id'];
         if ($this->adminInfo['admin_id'] != 1) {
             $this->focus['admin_id'] = $this->adminInfo['admin_id'];
         }
@@ -81,6 +82,7 @@ class RedirectUrl extends Base
                 //更新URL到数据库
                 $data = [
                     'id' => $inputData['id'],
+                    'admin_id' => $adminId,
                     'short_link' => $shortUrl['url_link']
                 ];
                 Cache::set($inputData['id'].'-short-url',$data,$accessToken['expires_in']??30*86400);
