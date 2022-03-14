@@ -62,7 +62,7 @@ class RedirectUrl extends Base
             // 获取token 缓存起来，再获取url_short
             $urlData = [
                 'path'          => 'pages/index/index',
-                'query'         => 'id='.$inputData['id'].'&admin_id=1',
+                'query'         => 'id='.$inputData['id'].'&admin_id='.$adminId,
                 'is_expire'     =>  true,
                 'expire_type'   => 1,
                 'expire_interval' => 1,
