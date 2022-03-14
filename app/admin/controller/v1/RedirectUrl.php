@@ -38,7 +38,7 @@ class RedirectUrl extends Base
 
         $acToken = '';
         if (!empty($appConfig)) {
-            if (Cache::has($adminId.'-access_token')) {
+            if (Cache::has($adminId.'-access_token') && if (Cache::has($inputData['id'].'-short-url')){
                 $acToken = Cache::get($adminId.'-access_token');
             } else {
                 $url = 'https://api.weixin.qq.com/cgi-bin/token?';//请求url
@@ -80,6 +80,7 @@ class RedirectUrl extends Base
                     'id' => $inputData['id'],
                     'short_link' => $shortUrl['url_link']
                 ];
+                Cache::set($inputData['id'].'-short-url',$data,$accessToken['expires_in']??30*86400);
                 $ret = $this->model->editData($data);
             } else {
                 $ret = false;
