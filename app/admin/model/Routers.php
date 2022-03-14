@@ -10,6 +10,24 @@ use think\facade\Log;
  */
 class Routers extends Base
 {
+    protected $schema = [
+        'id'	=>	'int',
+        'pid'	=>	'int',
+        'title'	=>	'string',
+        'path'	=>	'string',
+        'component'	=>	'string',
+        'icon'	=>	'string',
+        'redirect'	=>	'string',
+        'always_show'	=>	'int',
+        'hidden'	=>	'int',
+        'affix'	=>	'string',
+        'no_cache'	=>	'string',
+        'sort'	=>	'int',
+        'status'	=>	'int',
+        'create_time'	=>	'int',
+        'update_time'	=>	'int'
+    ];
+
     /**
      * 通过角色ID获取菜单权限
      * @param $roleId

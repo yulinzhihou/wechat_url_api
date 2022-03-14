@@ -35,7 +35,7 @@ class Base extends BaseController
     /**
      * 管理员信息
      * @var array
-     */
+    Base*/
     protected $adminInfo = [];
 
     /**

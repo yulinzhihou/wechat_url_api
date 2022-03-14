@@ -10,6 +10,21 @@ use think\facade\Log;
  */
 class Admin extends Base
 {
+    protected $schema = [
+        'id'	=>	'int',
+        'username'	=>	'string',
+        'password'	=>	'string',
+        'phone'	=>	'string',
+        'email'	=>	'string',
+        'salt'	=>	'string',
+        'avatar'	=>	'string',
+        'role_id'	=>	'int',
+        'auth_group_id'	=>	'int',
+        'status'	=>	'int',
+        'create_time'	=>	'int',
+        'update_time'	=>	'int'
+    ];
+
     /**
      * 获取用户
      * @param array $data

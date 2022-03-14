@@ -8,5 +8,14 @@ namespace app\admin\model;
  */
 class Role extends Base
 {
-
+    protected $schema = [
+        'id'	=>	'int',
+        'name'	=>	'string',
+        'rules'	=>	'string',
+        'key'	=>	'string',
+        'description'	=>	'string',
+        'status'	=>	'int',
+        'create_time'	=>	'int',
+        'update_time'	=>	'int'
+    ];
 }
