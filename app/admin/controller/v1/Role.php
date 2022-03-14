@@ -10,7 +10,7 @@ use app\admin\validate\Role as RoleValidate;
 /**
  * 角色组控制器
  */
-class Role extends
+class Role extends Base
 {
     public function initialize()
     {
