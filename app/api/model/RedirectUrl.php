@@ -65,8 +65,10 @@ class RedirectUrl extends Model
     {
         if (isset($data['id']) && $data['id'] > 0) {
             $result = $this->find($data['id']);
-            $tmp = $result[$data['type']];
-            return $result->save([$data['type']=>$tmp+1]);
+            if ($result) {
+                $tmp = $result[$data['type']];
+                return $result->save([$data['type']=>$tmp+1]);
+            }
         }
         return false;
     }
